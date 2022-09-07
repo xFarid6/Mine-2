@@ -9,24 +9,24 @@ from ui import *
 from uiParameters import *
 import colorsys
 
-size = (Width, Height)
+size: tuple[int, int] = (Width, Height)
 pygame.init()
 pygame.font.init()
-screen = pygame.display.set_mode(size)
+screen: pygame.surface.Surface = pygame.display.set_mode(size)
 pygame.display.set_caption("Cloth Simulation")
-clock = pygame.time.Clock()
+clock: pygame.time.Clock = pygame.time.Clock()
 
 
-textI = "0"
-keyPressed = False
+textI:str = "0"
+keyPressed: bool = False
 d = Cloth(Vector2(Width//2 - 200, Height//2 - 120), rowsInput.value, colsInput.value, spacingInput.value)
-toggle = False
+toggle: bool = False
 
-SpaceButtonPressed = False
-clicked = False
-showUI = False
-run = True
-backSpace = False
+SpaceButtonPressed: bool = False
+clicked: bool = False
+showUI: bool = False
+run: bool = True
+backSpace: bool = False
 
 while run:
     deltaTime = clock.tick(30)

@@ -2,7 +2,7 @@ from math import sqrt, pow
 from constants import *
 
 class Vector3:
-    def __init__(self, x, y, z):
+    def __init__(self, x: int | float, y: int | float, z: int | float) -> None:
         self.x = x
         self.y = y
         self.z = z
@@ -46,7 +46,7 @@ class Vector3:
 
 
 class Vector2:
-    def __init__(self, x, y):
+    def __init__(self, x: int | float, y: int | float):
         self.x = x
         self.y = y
 
@@ -92,14 +92,16 @@ class Vector2:
         return f'{self.x} , {self.y}'
 
 
-def toVector(mat) -> Vector2 | Vector3:
+def toVector(mat: list[list]) -> Vector2 | Vector3:
     if len(mat) == 2:
         return Vector2(mat[0][0], mat[1][0])
     else:
         return Vector3(mat[0][0], mat[1][0], mat[2][0])
 
-def Distance(v1, v2) -> float | None:
+def Distance(v1: Vector2 | Vector3, v2: Vector2 | Vector3) -> float:
     if type(v1) is Vector2 :
         return sqrt( (v1.x - v2.x)*(v1.x - v2.x) + (v1.y - v2.y)*(v1.y - v2.y) )
     elif type(v1) is Vector3 :
         return sqrt( (v1.x - v2.x) *(v1.x - v2.x) + (v1.y - v2.y)*(v1.y - v2.y) + (v1.z - v2.z)*(v1.z - v2.z))
+    else:
+        raise TypeError('v1 and v2 must be Vector2 or Vector3')

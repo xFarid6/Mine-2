@@ -5,10 +5,22 @@ import colorsys
 import math
 
 
-def hsv2rgb(h,s,v) -> tuple[int, ...]:
+def hsv2rgb(h: int | float, s: int, v: int) -> tuple[int, ...]:
+    """
+    It takes in a hue, saturation, and value, and returns a tuple of the corresponding RGB values
+    
+    Args:
+      h (int): Hue, which is a degree on the color wheel from 0-360. 0 is red, 120 is green, 240 is
+    blue.
+      s (int): saturation
+      v (int): the value of the color. This is the brightness of the color.
+    
+    Returns:
+      A tuple of 3 integers, representing the RGB values of the color.
+    """
     return tuple(round(i * 255) for i in colorsys.hsv_to_rgb(h,s,v))
 
-def Sigmoid(x) -> float:
+def Sigmoid(x: float | int) -> float:
     """
     > The sigmoid function takes in a real number and returns a value between 0 and 1
     
@@ -20,7 +32,7 @@ def Sigmoid(x) -> float:
     """
     return 1 / (1 + math.exp(-x))
 
-def SigmoidDerivative(x) -> float:
+def SigmoidDerivative(x: int | float) -> float:
     """
     > The sigmoid function takes in a real number and returns a value between 0 and 1
     
@@ -34,12 +46,12 @@ def SigmoidDerivative(x) -> float:
 
 
 class Point:
-    def __init__(self, position, previousPosition, radius: int=3, color: tuple[int, int, int]=(240, 240, 240)):
+    def __init__(self, position: Vector2, previousPosition: Vector2, radius: int=3, color: tuple[int, int, int]=(240, 240, 240)):
         self.position = position
         self.previousPosition = previousPosition
         self.radius = radius
         self.color = (hsv2rgb((position.x+position.y)/1000 , 1, 1) )
-        self.isClicked = False
+        self.isClicked: bool = False
 
     def update(self) -> None:
         #compute velocity
@@ -54,7 +66,9 @@ class Point:
         #update our current position
         self.position = self.position + vel
 
-    def HandleEvents(self, toggle: bool=False, lockNodes=None, joints=None, i_vert= None, bSpace=False):
+        # self.previousPosition, self.position = self.position, self.position + vel
+
+    def HandleEvents(self, toggle: bool=False, lockNodes: list[Vector2] | None=None, joints: list[Vector2] | None=None, i_vert: int | None=None, bSpace: bool=False):
         if toggle == False:
             if pygame.mouse.get_pressed()[0]:
                 mousePosition = pygame.mouse.get_pos()
@@ -97,22 +111,24 @@ class Point:
             self.position.y = Height-self.radius
             self.previousPosition.y = self.position.y + vel.y
 
-    def Draw(self, screen):
+    def Draw(self, screen: pygame.surface.Surface) -> None:
         pygame.draw.circle(screen, self.color, self.position.TuplePosition(), self.radius)
 
 
 class Polygon:
-    def __init__(self,vertices=[Point(Vector2(10, 10), Vector2(0, 0), 3)], joints=[Vector2(0, -1)],static=[],  lineThickness = 4, color=(0, 0, 0)):
+    def __init__(self,
+        vertices: list[Point]=[Point(Vector2(10, 10), Vector2(0, 0), 3)], 
+        joints: list[Vector2]=[Vector2(0, -1)], static: list[Point]=[],  lineThickness: int = 4, color: tuple[int, int, int]=(0, 0, 0)):
         self.vertices = vertices
         self.joints = joints
         self.color = color
         self.static = static
-        self.dists = [ Distance( self.vertices[self.joints[i][0]].position, self.vertices[self.joints[i][1]].position ) for i in range(len(self.joints))]
+        self.dists = [ Distance( self.vertices[self.joints[i][0]].position, self.vertices[self.joints[i][1]].position ) for i in range(len(self.joints))]  # type: ignore
         self.lineThickness = lineThickness
-        self.showPoint = True
-        self.deltaTime = 10
+        self.showPoint: bool = True
+        self.deltaTime: float = 10
 
-    def Update(self, toggle, bSpace):
+    def Update(self, toggle: bool, bSpace: bool):
         for vertice in self.vertices:
             if not vertice in self.static:
                 vertice.Bound()
@@ -141,7 +157,7 @@ class Polygon:
                 # self.vertices[self.joints[i][1]].position = (self.vertices[self.joints[i][0]].position - current) * 2
 
 
-    def Draw(self, screen):
+    def Draw(self, screen: pygame.surface.Surface):
         if len(self.vertices) < 2:
             print("the polygon class must have more than two point")
             return
@@ -155,15 +171,15 @@ class Polygon:
                     self.vertices[i].Draw(screen)
 
 
-def Box(position, s,  length, thickness, color=(255, 23, 50)):
-        vertices = [Point(position, position-1, s),
+def Box(position, s,  length: int, thickness: int, color: tuple[int, int, int]=(255, 23, 50)):
+        vertices: list[Point] = [Point(position, position-1, s),
                     Point(Vector2(position.x + length, position.y), Vector2(position.x-1+length, position.y-1), s),
                     Point(position+length, position - 1 + length, s),
                     Point(Vector2(position.x , position.y+ length), Vector2(position.x-1, position.y-1+length), s)]
 
-        joints = [[0, 1], [1, 2], [2, 3], [3, 0], [2, 0], [1, 3]]
+        joints: list[Vector2] = [[0, 1], [1, 2], [2, 3], [3, 0], [2, 0], [1, 3]]  # type: ignore
 
-        return Polygon(vertices, joints, thickness, color)
+        return Polygon(vertices, joints, thickness, color) # how is this working passing wrong values? That would be because the box function is never used
 
 def Rope(position, length, n, radius=3, thickness=3, color=(53, 180, 200)):
     x = position.x

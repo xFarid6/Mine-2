@@ -37,7 +37,6 @@ class Button:
         else:
             self.color = self.temp
 
-
     def Render(self, screen):
         self.HandleMouse()
         font = pygame.font.Font(self.font, self.fontSize)
@@ -65,6 +64,7 @@ class Panel:
         s.fill(self.color)
         screen.blit(s, (self.position[0], self.position[1]))
         #pygame.draw.rect(screen, self.color, pygame.Rect(self.position[0], self.position[1], self.w, self.h))
+
 
 class ToggleButton:
     def __init__(self, position= ((Width-200, 400)), w = 30, h=30, state=False, color=(40, 40, 10), activeColor=(240, 140, 60)):
@@ -154,9 +154,6 @@ class DigitInput:
         backspace == False
         self.text = ""
 
-
-
-
     def updateText(self, val, pressed):
         m = pygame.mouse.get_pos()
         if m[0] >= self.position[0] and m[0] <= self.position[0] + self.w:
@@ -170,7 +167,6 @@ class DigitInput:
         else:
             self.hoverEnter = False
             val = ""
-
 
     def Render(self, screen, val, backspace, pressed):
         self.updateText(val, pressed)
