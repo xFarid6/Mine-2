@@ -17,7 +17,7 @@ pygame.display.set_caption("Cloth Simulation")
 clock: pygame.time.Clock = pygame.time.Clock()
 
 
-textI:str = "0"
+textI: str = "0"
 keyPressed: bool = False
 d = Cloth(Vector2(Width//2 - 200, Height//2 - 120), rowsInput.value, colsInput.value, spacingInput.value)
 toggle: bool = False

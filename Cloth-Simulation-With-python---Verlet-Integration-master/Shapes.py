@@ -188,16 +188,16 @@ def Rope(position, length, n, radius=3, thickness=3, color=(53, 180, 200)):
     joints = [ [i, i+1] for i in range(len(vertices)-1)]
     static = [vertices[0], vertices[-1]]
 
-    return Polygon(vertices, joints,static, thickness, color)
+    return Polygon(vertices, joints, static, thickness, color)
 
-def Cloth(position, horiz, vertiz, t, radius= 5, thickness=3, vertical=True, horizontal=True, Diagonal1=False, Diagonal2=False,showPoint=False, color=(240, 240, 240)):
+def Cloth(position: Vector2, horiz: int, vertiz: int, t: int, radius= 5, thickness=3, vertical=True, horizontal=True, Diagonal1=False, Diagonal2=False,showPoint=False, color=(240, 240, 240)):
     x , y = position.x, position.y
     vertices = []
     for j in range(vertiz):
         for i in range(horiz):
             vertices.append( Point(Vector2(x+i*t, y+j*t), Vector2(x+i*t, y+j*t), radius ) )
 
-    joints = []
+    joints: list = []
 
     # Horizontal connection
     if horizontal == True:

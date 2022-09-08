@@ -122,7 +122,7 @@ class TextUI:
 
 
 class DigitInput:
-    def __init__(self,startingValue, position = (Width-320, 100), w= 300, h= 600, color=(8, 3, 12)):
+    def __init__(self,startingValue: int, position = (Width-320, 100), w= 300, h= 600, color=(8, 3, 12)):
         self.position = position
         self.text = str(startingValue)
         self.fontColor = (255, 255, 255)
