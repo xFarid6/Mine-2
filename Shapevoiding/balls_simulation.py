@@ -41,7 +41,6 @@ while run:
 
     if clicked:
         verletObjects.append(VerletObject(*pygame.mouse.get_pos()))
-        clicked = False
 
     solver.update(deltaTime)
 

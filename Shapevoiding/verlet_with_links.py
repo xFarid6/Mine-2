@@ -29,21 +29,45 @@ class VerletObject:
         pygame.draw.circle(screen, (255, 255, 255), self.currentPosition, self.radius)
 
 
+class Link:
+    def __init__(self, object1: VerletObject, object2: VerletObject, target_dist: float):
+        self.object1 = object1
+        self.object2 = object2
+        self.target_dist = target_dist
+
+    def apply(self):
+        # Solve the constraint between the two objects
+        axis: pygame.math.Vector2 = self.object1.currentPosition - self.object2.currentPosition # vector from object1 to object2
+        dist = axis.length() # the actual distance
+        n: pygame.math.Vector2 = axis / dist # normalized axis
+        delta: float = self.target_dist - dist # the penetration depth
+        self.object1.currentPosition += 0.5 * delta * n # move object1 half the penetration depth
+        self.object2.currentPosition -= 0.5 * delta * n # move object2 half the penetration depth
+
+    def draw(self):
+        pygame.draw.line(pygame.display.get_surface(), (200, 200, 200), self.object1.currentPosition, self.object2.currentPosition, 2)
+
+
 class Solver:
-    def __init__(self, verlet_objects: list[VerletObject]):
+    def __init__(self, verlet_objects: list[VerletObject], links: list[Link]):
         self.verlet_objects = verlet_objects
         self.gravity: pygame.math.Vector2 = pygame.Vector2(0.0, 1000.0)
 
+        self.links = links
+
     def update(self, dt: float):
-        sub_steps = 10 # heavily impacts the stability of the simulation and the performance
+        sub_steps = 8 # heavily impacts the stability of the simulation and the performance
         sub_dt = dt / float(sub_steps)
         for _ in range(sub_steps, 0, -1):
-            self.apply_gravity()
-            self.apply_constraints_circle()
+            # self.apply_gravity()
+            self.apply_constraints_screen()
             self.solve_collisions()
-            self.update_positions(sub_dt)
+            # self.update_positions(sub_dt)
+
+            self.update_links() 
 
         self.draw_verlet_objects(pygame.display.get_surface())
+        self.draw_links()
 
     def update_positions(self, dt: float):
         for verlet_object in self.verlet_objects:
@@ -127,21 +151,10 @@ class Solver:
         for verlet_object in self.verlet_objects:
             verlet_object.draw(screen)
 
+    def update_links(self): 
+        for link in self.links:
+            link.apply()
 
-class Link:
-    def __init__(self, object1: VerletObject, object2: VerletObject, target_dist: float):
-        self.object1 = object1
-        self.object2 = object2
-        self.target_dist = target_dist
-
-    def apply(self):
-        # Solve the constraint between the two objects
-        axis: pygame.math.Vector2 = self.object1.currentPosition - self.object2.currentPosition # vector from object1 to object2
-        dist = axis.length() # the actual distance
-        n: pygame.math.Vector2 = axis / dist # normalized axis
-        delta: float = self.target_dist - dist # the penetration depth
-        self.object1.currentPosition += 0.5 * delta * n # move object1 half the penetration depth
-        self.object2.currentPosition -= 0.5 * delta * n # move object2 half the penetration depth
-
-    def draw(self):
-        pygame.draw.line(pygame.display.get_surface(), (200, 200, 200), self.object1.currentPosition, self.object2.currentPosition, 2)
+    def draw_links(self):
+        for link in self.links:
+            link.draw()
