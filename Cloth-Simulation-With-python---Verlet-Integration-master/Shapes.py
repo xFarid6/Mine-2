@@ -1,6 +1,5 @@
 import pygame
 from constants import *
-from Vector import *
 import colorsys
 import math
 
