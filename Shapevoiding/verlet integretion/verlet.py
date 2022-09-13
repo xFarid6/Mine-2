@@ -1,5 +1,6 @@
 import pygame
 from itertools import count
+from functools import cache
 
 
 class VerletObject:
@@ -35,7 +36,7 @@ class Solver:
         self.gravity: pygame.math.Vector2 = pygame.Vector2(0.0, 1000.0)
 
     def update(self, dt: float):
-        sub_steps = 10 # heavily impacts the stability of the simulation and the performance
+        sub_steps = 8 # heavily impacts the stability of the simulation and the performance
         sub_dt = dt / float(sub_steps)
         for _ in range(sub_steps, 0, -1):
             self.apply_gravity()

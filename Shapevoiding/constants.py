@@ -1,9 +1,15 @@
 Width: int = 1000
 Height: int = 700
-FPS: int = 60
+FPS: int = 30
+
+import pygame
+def draw_text(text, font, color, surface, x, y):
+    textobj = font.render(text, 1, color)
+    textrect = textobj.get_rect(center= (x, y))
+    surface.blit(textobj, textrect)
 
 BackgroundColor: tuple = (30, 30, 30)
-color_codes = {'maroon': (128, 0, 0),
+color_codes: dict[str, tuple[int, ...]] = {'maroon': (128, 0, 0),
                'dark red': (139, 0, 0),
                'brown': (165, 42, 42),
                'firebrick': (178, 34, 34),
