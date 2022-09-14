@@ -1,5 +1,5 @@
-from constants import Width, Height, BackgroundColor, FPS, draw_text, color_codes
 from dataclasses import dataclass, field
+from constants import Width, Height, draw_text, color_codes
 from os import listdir
 from main import Game
 import numpy as np 
@@ -19,10 +19,14 @@ class Player:
     velocity: np.ndarray = np.array([0, 0], dtype=np.int8)
     max_velocity: int = 7
 
+    lives: int = 3
+    font: pygame.font.Font = pygame.font.SysFont('comicsans', 20)
+    left: bool = False
+
     def __post_init__(self):
         for x, y in enumerate(listdir(r"C:\Cose Nuove\Code\Mine 2\Shapevoiding\idle")):
             if y.endswith('.png'):
-                img = pygame.image.load("C:\\Cose Nuove\\Code\\Mine 2\\Shapevoiding\idle\\" + y).convert_alpha()
+                img = pygame.image.load("C:\\Cose Nuove\\Code\\Mine 2\\Shapevoiding\\idle\\" + y).convert_alpha()
                 img = pygame.transform.scale(img, (img.get_width() * 2, img.get_height() * 2))
                 self.idle[x] = img
         
@@ -44,6 +48,12 @@ class Player:
         if keys.get(pygame.K_s):
             self.velocity[1] += 1
 
+        # if np.allclose(self.velocity, np.array([0, 0])):
+        #   self.velocity = np.array([0, 0], dtype=np.int8)
+
+        if not any(keys.values()):
+            self.velocity = np.array([0, 0], dtype=np.int8)
+
         if self.velocity[0] > self.max_velocity:
             self.velocity[0] = self.max_velocity
         elif self.velocity[0] < -self.max_velocity:
@@ -53,7 +63,9 @@ class Player:
         elif self.velocity[1] < -self.max_velocity:
             self.velocity[1] = -self.max_velocity
 
-        self.player_rect.move_ip(*self.velocity)
+        # self.player_rect.move_ip(*self.velocity)
+        self.player_rect.x += self.velocity[0]
+        self.player_rect.y += self.velocity[1]
 
     def constraints(self):
         if self.player_rect.left < 0:
@@ -71,7 +83,7 @@ class Player:
 
     def update_player_image(self, dt: float):
         self.player_frame += 10 * dt
-        print(self.player_frame)
+        # print(self.player_frame)
 
         if np.allclose(self.velocity, np.array([0, 0])):
             self.player_state = 'idle'
@@ -80,8 +92,13 @@ class Player:
             self.player_state = 'run'
             self.player_image = self.run.get(int(self.player_frame) % len(self.run), self.run[0])
 
-            if self.velocity[0] < 0:
-                self.player_image = pygame.transform.flip(self.player_image, True, False)
+        if self.velocity[0] < 0:
+            self.left = True
+        elif self.velocity[0] > 0:
+            self.left = False
+
+        if self.left:
+            self.player_image = pygame.transform.flip(self.player_image, True, False)
 
     def update(self, dt: float):
         
@@ -90,6 +107,8 @@ class Player:
         self.update_player_image(dt)
 
     def draw(self):
+        draw_text(f'Lives: {self.lives}', self.font, color_codes['medium violet red'], self.game.screen, 50, 20)
+
         self.game.screen.blit(
             self.player_image, 
             self.player_rect
