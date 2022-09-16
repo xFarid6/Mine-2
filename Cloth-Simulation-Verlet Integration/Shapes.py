@@ -2,6 +2,7 @@ import pygame
 from constants import *
 import colorsys
 import math
+from Vector import *
 
 
 def hsv2rgb(h: int | float, s: int, v: int) -> tuple[int, ...]:
@@ -117,12 +118,19 @@ class Point:
 class Polygon:
     def __init__(self,
         vertices: list[Point]=[Point(Vector2(10, 10), Vector2(0, 0), 3)], 
-        joints: list[Vector2]=[Vector2(0, -1)], static: list[Point]=[],  lineThickness: int = 4, color: tuple[int, int, int]=(0, 0, 0)):
+        joints: list[Vector2]=[Vector2(0, -1)], static: list[Point]=[],  lineThickness: int = 4, 
+        color: tuple[int, int, int]=(0, 0, 0)
+                ):
         self.vertices = vertices
         self.joints = joints
         self.color = color
         self.static = static
-        self.dists = [ Distance( self.vertices[self.joints[i][0]].position, self.vertices[self.joints[i][1]].position ) for i in range(len(self.joints))]  # type: ignore
+        self.dists = [ 
+            Distance( 
+                self.vertices[self.joints[i][0]].position, 
+                self.vertices[self.joints[i][1]].position 
+                ) for i in range(len(self.joints))
+                    ]  # type: ignore
         self.lineThickness = lineThickness
         self.showPoint: bool = True
         self.deltaTime: float = 10
@@ -133,15 +141,15 @@ class Polygon:
                 vertice.Bound()
                 vertice.update()
             vertice.HandleEvents(toggle, self.static, self.joints, self.vertices.index(vertice), bSpace)
-        # self.ConstraintPolygon()
+        self.ConstraintPolygon()
 
 
     def ConstraintPolygon(self):
         for i in range(len(self.joints)):
-            ln = self.dists[i]
+            lenght = self.dists[i]
             dist = Distance(self.vertices[self.joints[i][0]].position, self.vertices[self.joints[i][1]].position)
             d_pos = self.vertices[self.joints[i][0]].position - self.vertices[self.joints[i][1]].position
-            dl = ln - dist
+            dl = lenght - dist
             current =  d_pos * 0.5  * dl/dist
             pos1 = self.vertices[self.joints[i][0]]
             pos2 = self.vertices[self.joints[i][1]]

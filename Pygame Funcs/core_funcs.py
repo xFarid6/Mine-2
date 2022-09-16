@@ -16,7 +16,7 @@ def write_f(path: str, dat: str) -> None:
     f.close()
 
 
-def swap_color(img: pygame.Surface, old_c: tuple[int, int, int], new_c: tuple[int, int, int]) -> pygame.Surface:
+def swap_color(img: pygame.Surface, old_c: tuple[int, int, int], new_c: tuple[int, int, int]) -> pygame.surface.Surface:
     global e_colorkey
     img.set_colorkey(old_c)
     surf = img.copy()
@@ -26,7 +26,7 @@ def swap_color(img: pygame.Surface, old_c: tuple[int, int, int], new_c: tuple[in
     return surf
 
 
-def clip(surf: pygame.Surface, x: int, y: int, x_size: int, y_size: int) -> pygame.Surface:
+def clip(surf: pygame.Surface, x: int, y: int, x_size: int, y_size: int) -> pygame.surface.Surface:
     """
     It takes a surface, and returns a surface that is a copy of the original surface, but only the part
     that is within the rectangle defined by the parameters x,y,x_size,y_size
