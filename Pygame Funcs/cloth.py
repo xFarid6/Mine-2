@@ -148,12 +148,12 @@ class Stick:
             self.p1.x -= dx * 2
             self.p1.y -= dy * 2"""
 
-    def draw(self, screen):
+    def draw(self, screen: pygame.surface.Surface) -> None:
         pygame.draw.line(screen, (255, 255, 255), (int(self.p1.x), int(self.p1.y)), (int(self.p2.x), int(self.p2.y)), 1)
 
 
 class Cloth:
-    def __init__(self, x, y, w, h, res):
+    def __init__(self, x: int, y: int, width: int, height: int, side_size: int):
         """
         For each point in the grid, create a point, and then create sticks between the point and its
         neighbors.
@@ -164,22 +164,22 @@ class Cloth:
         :param h: height of the cloth
         :param res: number of points in each row/column
         """
-        self.points = []
-        self.sticks = []
-        target_distance = 40 # w / (res - 1)
-        for j in range(res):
-            for i in range(res):
-                p = Point(x + i * w / res, y + j * h / res)
+        self.points: list[Point] = []
+        self.sticks: list[Stick] = []
+        target_distance: int = 30 # w / (res - 1)
+        for j in range(side_size):
+            for i in range(side_size):
+                p = Point(x + i * width / side_size, y + j * height / side_size)
                 self.points.append(p)
                 if i > 0:
                     self.sticks.append(Stick(self.points[-1], self.points[-2], target_distance))
                 if j > 0:
-                    self.sticks.append(Stick(self.points[-1], self.points[-res - 1], target_distance))
+                    self.sticks.append(Stick(self.points[-1], self.points[-side_size - 1], target_distance))
                 if i > 0 and j > 0:
-                    self.sticks.append(Stick(self.points[-1], self.points[-res - 2], target_distance))
-                    self.sticks.append(Stick(self.points[-2], self.points[-res - 1], target_distance))
+                    self.sticks.append(Stick(self.points[-1], self.points[-side_size - 2], target_distance))
+                    self.sticks.append(Stick(self.points[-2], self.points[-side_size - 1], target_distance))
 
-        for i in range(res):
+        for i in range(side_size):
             self.points[i].pin()
             # self.points[-i - 1].pin()
 
@@ -212,7 +212,10 @@ def main():
     clock = pygame.time.Clock()
     running = True
 
-    cloth = Cloth(100, 100, 400, 400, 20)
+    cloth = Cloth(100, 10, 400, 400, 20)
+
+    right = False
+    left = False
 
     while running:
         mx, my = pygame.mouse.get_pos()
@@ -226,7 +229,28 @@ def main():
                 if event.key == pygame.K_w:
                     # add wind
                     for p in cloth.points:
-                        p.add_force(-100, 200)
+                        p.add_force(0, 200)
+                if event.key == pygame.K_a:
+                    left = True
+                if event.key == pygame.K_d:
+                    right = True
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_a:
+                    left = False
+                if event.key == pygame.K_d:
+                    right = False
+
+        if left:
+            """for p in cloth.points:
+                p.add_force(-100, 0)"""
+            for i in range(20):
+                cloth.points[i].x -= 5
+
+        if right:
+            """for p in cloth.points:
+                p.add_force(100, 0)"""
+            for i in range(20):
+                cloth.points[i].x += 5
 
 
         screen.fill((0, 0, 0))

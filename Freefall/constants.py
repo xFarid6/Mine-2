@@ -1,6 +1,6 @@
-Width: int = 1000
-Height: int = 700
-FPS: int = 30
+Width: int = 800
+Height: int = 900
+FPS: int = 60
 
 def draw_text(text, font, color, surface, x, y):
     textobj = font.render(text, 1, color)
