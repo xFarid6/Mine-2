@@ -41,7 +41,7 @@ while run:
     draw_text(f'Objects: {len(verletObjects)}', 10, 10)
     draw_text(f'FPS: {int(clock.get_fps())}', 10, 30)
 
-    if clicked and len(verletObjects) < 50:
+    if clicked and len(verletObjects) < 150:
         verletObjects.append(VerletObject(*pygame.mouse.get_pos()))
     else:    
         clicked = False

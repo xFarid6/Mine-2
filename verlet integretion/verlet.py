@@ -13,6 +13,9 @@ class VerletObject:
         self.lastPosition = self.currentPosition
         self.acceleration = pygame.Vector2()
 
+        self.circle_img = pygame.image.load("circle.png").convert_alpha()
+        self.circle_img = pygame.transform.scale(self.circle_img, (radius * 2, radius * 2))
+
     def update_position(self, dt: float):
         velocity: pygame.math.Vector2 = self.currentPosition - self.lastPosition
         # velocity.x *= 0.999
@@ -27,13 +30,15 @@ class VerletObject:
         self.acceleration += acceleration
 
     def draw(self, screen):
-        pygame.draw.circle(screen, (255, 255, 255), self.currentPosition, self.radius)
+        # pygame.draw.circle(screen, (255, 255, 255), self.currentPosition, self.radius)
+        screen.blit(self.circle_img, self.currentPosition - pygame.Vector2(self.radius, self.radius))
 
 
 class Solver:
     def __init__(self, verlet_objects: list[VerletObject]):
         self.verlet_objects = verlet_objects
         self.gravity: pygame.math.Vector2 = pygame.Vector2(0.0, 1000.0)
+        self.screen = pygame.display.get_surface()
 
     def update(self, dt: float):
         sub_steps = 10 # heavily impacts the stability of the simulation and the performance
@@ -44,7 +49,7 @@ class Solver:
             self.solve_collisions()
             self.update_positions(sub_dt)
 
-        self.draw_verlet_objects(pygame.display.get_surface())
+        self.draw_verlet_objects(self.screen)
 
     def update_positions(self, dt: float):
         for verlet_object in self.verlet_objects:

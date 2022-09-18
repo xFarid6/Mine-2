@@ -44,6 +44,9 @@ while run:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                run = False
     pygame.draw.circle(screen, white, (pos[0], pos[1]), radius, 1)
     mouse = pygame.mouse.get_pos()
 

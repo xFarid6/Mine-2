@@ -17,13 +17,12 @@ class Game:
     def run(self):
         while 1:
             self.clock.tick(FPS)
-            deltaTime = self.clock.get_time() / 1000
-            print(deltaTime)
+            deltaTime: float = self.clock.get_time() / 1000
             self.events()
-            self.update()
+            self.update(deltaTime)
             self.draw()
 
-    def update(self):
+    def update(self, deltaTime: float):
         ...
 
     def events(self):
