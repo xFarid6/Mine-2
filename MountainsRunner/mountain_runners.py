@@ -1,9 +1,13 @@
 from __future__ import annotations 
-import os
-from typing import Any
-import pygame
 from dataclasses import dataclass, field
+from typing import Any, Sequence
+import os
+
+import pygame
+
 from constants import BackgroundColor, Width, Height, FPS, color_codes
+from player import Player
+
 
 @dataclass(slots=True)
 class Game:
@@ -14,13 +18,17 @@ class Game:
     clock = pygame.time.Clock()
 
     bg: Background
+    player: Player
     game_layers: dict[str, Any] = field(init=False, default_factory=dict)
+    keys: Sequence[bool] = field(init=False, default_factory=list)
 
     def __init__(self):
         self.bg: Background = Background()
+        self.player: Player = Player()
 
         self.game_layers = {
             "background": self.bg,
+            "player": self.player,
         }
 
     def run(self):
@@ -40,6 +48,12 @@ class Game:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    quit()
+
+        self.keys = pygame.key.get_pressed()
 
     def draw(self):
         self.screen.fill(BackgroundColor)
@@ -48,25 +62,42 @@ class Game:
 
         pygame.display.flip()
 
-@dataclass(slots=True)
-class Background:
-    images: dict = field(default_factory=dict)
-    render_order: tuple[str, ...] = ("bg.png", "montain-far.png", "mountains.png", "trees.png", "foreground-trees.png")
 
-    def __post_init__(self):
-        for idx, img in enumerate(os.listdir("layers")):
+class Background:
+    def __init__(self):
+        self.images: dict[str, list] = {}
+        self.render_order: dict[str, float] = {  # type: ignore
+                    "bg.png": 0, 
+                    "montain-far.png": 1, 
+                    "mountains.png": 2, 
+                    "trees.png": 4, 
+                    "foreground-trees.png": 8
+                    }
+
+        # self.render_order: dict[float, str] = {k: v for v, k in sorted(self.render_order.items())}
+
+        # load images
+        for img in os.listdir("layers"):
             name = img[18:]
-            self.images[name] = pygame.image.load(f"layers/{img}").convert_alpha()
-            self.images[name] = pygame.transform.scale(self.images[name], (Width, Height))
+            loaded = pygame.image.load(f"layers/{img}").convert_alpha()
+            loaded = pygame.transform.scale(loaded, (Width, Height))
+            self.images[name] = [loaded, loaded.get_rect()]
+            # {"bg.png": [surf, rect]}"}
 
     def update(self, deltaTime: float):
-        ...
+        # parallax effect
+        for name, group in self.images.items():
+            img, rect = group
+            rect.x -= self.render_order.get(name)
+            if rect.x <= -Width:
+                rect.x = 0
 
     def draw(self, screen: pygame.Surface):
-        for name in self.render_order:
-            screen.blit(self.images[name], (0, 0))
+        for key, value in self.render_order.items():
+            img, rect = self.images[key]
+            screen.blit(img, rect)
+            screen.blit(img, (rect.x + Width, rect.y))
             
-
 
 if __name__ == "__main__":
     Game().run()
