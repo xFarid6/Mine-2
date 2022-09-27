@@ -76,6 +76,7 @@ class Spark:
 
 def main():
     font = pygame.font.SysFont('Arial', 20)
+    pygame.event.set_allowed([QUIT, KEYDOWN, KEYUP])
     while True:
         dt = clock.tick(60) / 1000
         screen.fill((0, 0, 0))
@@ -88,7 +89,7 @@ def main():
                 sparks.pop(i)
 
         mx, my = pygame.mouse.get_pos()
-        for i in range(10): 
+        for i in range(100): 
             sparks.append(Spark([mx, my], math.radians(random.randint(0, 360)), random.randint(3, 6), (255, 255, 255), 2))
 
         for event in pygame.event.get():

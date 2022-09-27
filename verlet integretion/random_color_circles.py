@@ -4,7 +4,10 @@ import random
 from typing import Any
 import pygame
 from pygame.locals import *
-from constants import *
+# from constants import *
+Width = 800
+Height = 600
+BackgroundColor = (30, 30, 30)
 
 
 class Game:

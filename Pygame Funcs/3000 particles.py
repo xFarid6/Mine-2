@@ -38,21 +38,32 @@ while True:
 
     if clicking:
         for i in range(60):
-            particles.append([[mx, my], [random.randint(0, 42) / 6 - 3.5, random.randint(0, 42) / 6 - 3.5], random.randint(4, 6)])
+            particles.append(
+                [
+                    [mx, my], # position
+                    [random.randint(0, 42) / 6 - 3.5, random.randint(0, 42) / 6 - 3.5], # velocity
+                    random.randint(4, 6) # size
+                ]
+                        )
 
     for particle in particles:
+        # move for x
         particle[0][0] += particle[1][0]
         loc_str = str(int(particle[0][0] / tile_size)) + ';' + str(int(particle[0][1] / tile_size))
         if loc_str in tile_map:
             particle[1][0] *= -0.7
             particle[1][1] *= -0.95
             particle[0][0] += particle[1][0] * 2
+
+        # move for y
         particle[0][1] += particle[1][1]
         loc_str = str(int(particle[0][0] / tile_size)) + ';' + str(int(particle[0][1] / tile_size))
         if loc_str in tile_map:
             particle[1][1] *= -0.7
             particle[1][0] = particle[1][0] * 0.95
             particle[0][1] += particle[1][1] * 2
+
+        # change size , apply gravity and draw particles
         particle[2] -= 0.035
         particle[1][1] += 0.15
         pygame.draw.circle(screen, (255, 255, 255), (int(particle[0][0]), int(particle[0][1])), int(particle[2]))
