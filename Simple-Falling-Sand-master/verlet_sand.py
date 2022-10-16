@@ -264,7 +264,6 @@ class SandHolderDict:
                     self.positions[key1] = [self.positions[key1][0], self.positions[key1][1]]
                     self.positions[key2] = [self.positions[key2][0], self.positions[key2][1]]
 
-
     def add_particle(self, pos):
         # add a particle to the simulation
 
