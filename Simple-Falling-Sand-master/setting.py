@@ -5,7 +5,7 @@ class Setting:
     fps     = 60
     window = None
 
-    cell_size = 20
+    cell_size = 3
     cols = height//cell_size
     rows = width//cell_size
     offset = 0
