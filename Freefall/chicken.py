@@ -19,38 +19,39 @@ class Chicken:
         self.chicken3: list[pygame.surface.Surface] = []
         self.chicken4: list[pygame.surface.Surface] = []
 
+        self.size = 32
         self.sprite_index: float = 0
         self.facing_right: bool = True
-        self.position: list[int] = [0, 0]
+        self.position: list[int] = [Width // 2 - self.size, Height // 2 - self.size]
         self.speed_h: float = 3
         self.speed_v: float = 0.5
         self.left: bool = False
         self.right: bool = False
-        self.vel_y: float = 0
-        size = 32
+        self.vel_y: float = 0 # velocity at which the chicken is falling
+        self.on_air: bool = True
 
         # slice sheet1 and put it in chicken1
         for y in range(0, 4):
             for x in range(0, 4):
-                rect = pygame.Rect(x * size, y * size, size, size)
+                rect = pygame.Rect(x * self.size, y * self.size, self.size, self.size)
                 self.chicken1.append(sheet1.subsurface(rect))
 
         # slice sheet2 and put it in chicken2
         for y in range(0, 4):
             for x in range(0, 4):
-                rect = pygame.Rect(x * size, y * size, size, size)
+                rect = pygame.Rect(x * self.size, y * self.size, self.size, self.size)
                 self.chicken2.append(sheet2.subsurface(rect))
 
         # slice sheet3 and put it in chicken3
         for y in range(0, 4):
             for x in range(0, 4):
-                rect = pygame.Rect(x * size, y * size, size, size)
+                rect = pygame.Rect(x * self.size, y * self.size, self.size, self.size)
                 self.chicken3.append(sheet3.subsurface(rect))
 
         # slice sheet4 and put it in chicken4
         for y in range(0, 4):
             for x in range(0, 4):
-                rect = pygame.Rect(x * size, y * size, size, size)
+                rect = pygame.Rect(x * self.size, y * self.size, self.size, self.size)
                 self.chicken4.append(sheet4.subsurface(rect))
 
     def update(self, deltaTime: float):
@@ -65,7 +66,7 @@ class Chicken:
         self.vel_y += self.speed_v
         self.position[1] += self.vel_y # type: ignore WTF is this ERROR?
 
-        if self.position[1] > Height // 2 - 32:
+        if self.position[1] > Height:
             self.position[1] = Height // 2 - 32
             self.vel_y = 0
 

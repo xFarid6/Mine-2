@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from constants import BackgroundColor, Width, Height, FPS, color_codes
 from chicken import Chicken
 from obstacles import Obstacles
-from typing import Any
+
 
 class Background:
     def __init__(self):
@@ -44,7 +44,14 @@ class Background:
         self.surfaces.append([self.rectangle, [self.rx, self.ry], self.rvector])
         self.surfaces.append([self.triangle, [self.tx, self.ty], self.tvector])
 
-    def update(self, deltaTime: float):
+        #### too lazy to delete this init code ####
+
+        self.fire_height: int = 30
+        self.particle_radius: int = 3
+        self.upper_fire: list[pygame.rect.Rect] = []
+        self.lower_fire: list[pygame.rect.Rect] = []
+
+    def update_shapes(self, deltaTime: float):
         for surface, pos, vector in self.surfaces:
             x, y = vector
             pos[0] += x * deltaTime * 100
@@ -67,10 +74,21 @@ class Background:
             triangle_points = [(0, 100), (50, 0), (100, 200)]
             pygame.draw.polygon(self.triangle, random.choice(list(color_codes.values())), triangle_points)
 
-    def draw(self, screen):
+    def draw_shapes(self, screen):
         """Draw the surfaces on the screen"""
         for surface, pos, _ in self.surfaces:
             screen.blit(surface, pos)
+
+    def update(self, deltaTime: float):
+        # draw a circle
+
+        # update x and y position
+
+        # if above y fire_height delete it
+
+    def draw(self, screen):
+        """Draw the flames"""
+
 
 @dataclass(slots=True)
 class Game:
@@ -98,8 +116,29 @@ class Game:
 
     def update(self, deltaTime: float):
         self.chicken.update(deltaTime)
-        self.obstacles.update(deltaTime)
+        self.obstacles.update(deltaTime, self.chicken)
         self.background.update(deltaTime)
+
+        # check collision between chicken and obstacles
+        for obstacle in self.obstacles.obstacles:
+            chicken_rect = pygame.Rect(
+                self.chicken.position[0], 
+                self.chicken.position[1], 
+                self.chicken.size, self.chicken.size)
+            obstacle_rect = pygame.Rect(
+                obstacle.x,
+                obstacle.y,
+                obstacle.width, obstacle.height)
+
+            if chicken_rect.colliderect(obstacle_rect):
+                self.chicken.position[1] = obstacle.y - self.chicken.size
+                self.chicken.vel_y = 0
+                self.chicken.on_air = False
+        else:
+            self.chicken.on_air = True
+
+        if self.roasted_chicken():
+            self.have_lunch()
 
     def events(self):
         for event in pygame.event.get():
@@ -122,9 +161,8 @@ class Game:
                     self.chicken.move_left(False)
                 if event.key == pygame.K_RIGHT:
                     self.chicken.move_right(False)
-
  
-    def draw(self):
+    def draw(self) -> None:
         self.screen.fill(BackgroundColor)
 
         self.background.draw(self.screen)
@@ -132,6 +170,47 @@ class Game:
         self.chicken.draw(self.screen)
 
         pygame.display.flip()
+
+    def roasted_chicken(self) -> bool:
+        if self.chicken.position[1] > Height - self.background.fire_height:
+            return True
+        if self.chicken.position[1] < self.background.fire_height:
+            return True
+        return False    
+
+    def have_lunch(self) -> None:
+        self.chicken.position[1] = Height // 2 - self.chicken.size
+        self.chicken.vel_y = 0
+        self.chicken.on_air = False
+
+        self.obstacles = Obstacles()
+        self.background = Background()
+
+        self.screen.fill(BackgroundColor)
+        self.draw_text("You can now have lunch!", 50, (Width / 2, Height / 2), (255, 255, 255))
+        self.draw_text("Press R to restart", 30, (Width / 2, Height / 2 + 50), (255, 255, 255))
+        ending_screen = True
+        while ending_screen:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        quit()
+                    if event.key == pygame.K_r or event.key == pygame.K_SPACE:
+                        ending_screen = True
+                        print("Restarting")
+                        # TODO: implement restart
+            pygame.display.flip()
+
+    def draw_text(self, text, size, pos, color) -> None:
+        font = pygame.font.SysFont("comicsansms", size)
+        text = font.render(text, True, color)
+        text_rect = text.get_rect()
+        text_rect.center = pos
+        self.screen.blit(text, text_rect)
 
 if __name__ == "__main__":
     Game().run()
