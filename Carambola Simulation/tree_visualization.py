@@ -5,12 +5,17 @@ class Game:
     def __init__(self):
         pygame.init()
         pygame.mixer.pre_init(44100, -16, 2, 512)
-        self.screen = pygame.display.set_mode((800, 600))
+        self.width = 1700
+        self.height = 800
+        self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Freefall")
         self.clock = pygame.time.Clock()
 
         self.tree = BinaryTree()
-        self.tree.fill_tree(5, True)
+        num_of_values = 500
+        lower_bound = 0
+        upper_bound = 1000
+        self.tree.fill_tree(num_of_values, True, lower_bound, upper_bound)
 
         self.tree.in_order_traversal(sep=" ")
         print()
@@ -40,7 +45,7 @@ class Game:
 
         self.draw_text("FPS: " + str(int(self.clock.get_fps())), 18, (255, 255, 255), 10, 10)
 
-        self.tree.draw_tree(self.screen, 800, 600)
+        self.tree.draw_tree(self.screen, self.width, self.height)
 
         pygame.display.flip()
 

@@ -85,6 +85,7 @@ class Background:
         # update x and y position
 
         # if above y fire_height delete it
+        ...
 
     def draw(self, screen):
         """Draw the flames"""
@@ -118,6 +119,7 @@ class Game:
         self.chicken.update(deltaTime)
         self.obstacles.update(deltaTime, self.chicken)
         self.background.update(deltaTime)
+        self.background.update_shapes(deltaTime)
 
         # check collision between chicken and obstacles
         for obstacle in self.obstacles.obstacles:
@@ -165,6 +167,7 @@ class Game:
     def draw(self) -> None:
         self.screen.fill(BackgroundColor)
 
+        self.background.draw_shapes(self.screen)
         self.background.draw(self.screen)
         self.obstacles.draw(self.screen)
         self.chicken.draw(self.screen)

@@ -52,12 +52,12 @@ class BinaryTree:
         right_height = self._height(node.right, current_height + 1)
         return max(left_height, right_height)
 
-    def fill_tree(self, elements, random_fill=False):
+    def fill_tree(self, n_elements, random_fill=False, lower_bound=0, upper_bound=100):
         if random_fill:
-            for i in range(elements):
-                self.insert(random.randint(0, 100))
+            for i in range(n_elements):
+                self.insert(random.randint(lower_bound, upper_bound))
         else:
-            for i in range(elements):
+            for i in range(n_elements):
                 self.insert(i)
 
     def search(self, value):

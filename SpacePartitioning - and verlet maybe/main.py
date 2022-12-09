@@ -82,7 +82,7 @@ class Game:
 
         pygame.draw.circle(self.screen, (255, 255, 255), (self.Width //2, self.Height//2), 300, 1)
 
-        # self.qtree.show(self.screen)
+        self.qtree.show(self.screen)
 
         pygame.display.flip()
 
